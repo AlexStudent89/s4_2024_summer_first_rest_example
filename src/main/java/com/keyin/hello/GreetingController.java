@@ -1,15 +1,15 @@
+//GreetingController
 package com.keyin.hello;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/greetings")
 public class GreetingController {
+
     @Autowired
     private GreetingService greetingService;
 
@@ -18,31 +18,33 @@ public class GreetingController {
         return greetingService.findGreetingsByNameAndGreeting(name, greeting);
     }
 
-    @GetMapping("greetings")
+    @GetMapping
     public List<Greeting> getAllGreetings() {
         return greetingService.getAllGreetings();
     }
 
-    @GetMapping("greeting/{index}")
-    public Greeting getGreeting(@PathVariable Integer index) {
+    @GetMapping("/{index}")
+    public Greeting getGreeting(@PathVariable Long index) {
         return greetingService.getGreeting(index);
     }
 
-    @PostMapping("greeting")
+    @PostMapping
     public Greeting createGreeting(@RequestBody Greeting newGreeting) {
         return greetingService.createGreeting(newGreeting);
     }
 
-    @PutMapping("greeting/{index}")
-    public Greeting updateGreeting(@PathVariable Integer index, @RequestBody Greeting updatedGreeting) {
+    @PutMapping("/{index}")
+    public Greeting updateGreeting(@PathVariable Long index, @RequestBody Greeting updatedGreeting) {
         return greetingService.updateGreeting(index, updatedGreeting);
     }
 
-    @DeleteMapping("greeting/{index}")
-    public void deleteGreeting(@PathVariable Integer index) {
+    @DeleteMapping("/{index}")
+    public void deleteGreeting(@PathVariable Long index) {
         greetingService.deleteGreeting(index);
     }
 
-
-
+    @PutMapping("/{id}/languages")
+    public Greeting addLanguageToGreeting(@PathVariable Long id, @RequestBody Language newLanguage) {
+        return greetingService.addLanguageToGreeting(id, newLanguage);
+    }
 }

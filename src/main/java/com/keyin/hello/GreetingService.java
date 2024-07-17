@@ -1,13 +1,13 @@
+//GreetingService
 package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import java.util.*;
 
 @Service
 public class GreetingService {
+
     @Autowired
     private GreetingRepository greetingRepository;
 
@@ -16,37 +16,25 @@ public class GreetingService {
 
     public Greeting getGreeting(long index) {
         Optional<Greeting> result = greetingRepository.findById(index);
-
-        if (result.isPresent()) {
-            return result.get();
-        }
-
-        return null;
+        return result.orElse(null);
     }
 
     public Greeting createGreeting(Greeting newGreeting) {
-        if (newGreeting.getLanguages() == null) {
+        if (newGreeting.getLanguages() == null || newGreeting.getLanguages().isEmpty()) {
             Language english = languageRepository.findByName("English");
-
             if (english == null) {
-                english = new Language();
+                english = new Language("English");
                 languageRepository.save(english);
             }
-
-            ArrayList<Language> languageArrayList = new ArrayList<Language>();
-            languageArrayList.add(english);
-
-            newGreeting.setLanguages(languageArrayList);
+            newGreeting.setLanguages(List.of(english));
         } else {
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
-
                 if (langInDB == null) {
                     language = languageRepository.save(language);
                 }
             }
         }
-
         return greetingRepository.save(newGreeting);
     }
 
@@ -54,21 +42,39 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
+    public Greeting updateGreeting(long index, Greeting updatedGreeting) {
         Greeting greetingToUpdate = getGreeting(index);
-
-        greetingToUpdate.setName(updatedGreeting.getName());
-        greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
-
-        return greetingRepository.save(greetingToUpdate);
+        if (greetingToUpdate != null) {
+            greetingToUpdate.setName(updatedGreeting.getName());
+            greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
+            greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+            return greetingRepository.save(greetingToUpdate);
+        }
+        return null;
     }
 
     public void deleteGreeting(long index) {
-        greetingRepository.delete(getGreeting(index));
+        Greeting greeting = getGreeting(index);
+        if (greeting != null) {
+            greetingRepository.delete(greeting);
+        }
     }
 
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
+    }
+
+    public Greeting addLanguageToGreeting(Long greetingId, Language newLanguage) {
+        Optional<Greeting> optionalGreeting = greetingRepository.findById(greetingId);
+        if (optionalGreeting.isPresent()) {
+            Greeting greeting = optionalGreeting.get();
+            boolean languageExists = greeting.getLanguages().stream()
+                    .anyMatch(language -> language.getName().equalsIgnoreCase(newLanguage.getName()));
+            if (!languageExists) {
+                greeting.getLanguages().add(newLanguage);
+                return greetingRepository.save(greeting);
+            }
+        }
+        return null;
     }
 }

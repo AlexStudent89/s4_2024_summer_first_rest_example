@@ -2,7 +2,6 @@
 package com.keyin.hello;
 
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
@@ -12,12 +11,14 @@ public class Greeting {
     @SequenceGenerator(name = "greeting_sequence", sequenceName = "greeting_sequence", allocationSize = 1, initialValue=1)
     @GeneratedValue(generator = "greeting_sequence")
     private long id;
+
     private String greeting;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Language> languages;
 
+    // Getters and Setters
     public long getId() {
         return id;
     }
