@@ -42,4 +42,7 @@ public class GreetingController {
     public void deleteGreeting(@PathVariable Integer index) {
         greetingService.deleteGreeting(index);
     }
+
+
+
 }
