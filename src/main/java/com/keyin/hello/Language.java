@@ -3,15 +3,19 @@ package com.keyin.hello;
 
 import jakarta.persistence.*;
 
+//import javax.persistence.*;
+import java.util.List;
+
 @Entity
 public class Language {
 
     @Id
-    @SequenceGenerator(name = "language_sequence", sequenceName = "language_sequence", allocationSize = 1, initialValue=1)
-    @GeneratedValue(generator = "language_sequence")
-    private long id;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
+
+    @OneToMany(mappedBy = "language")
+    private List<Greeting> greetings;
 
     public Language() {
     }
@@ -20,12 +24,11 @@ public class Language {
         this.name = name;
     }
 
-    // Getters and Setters
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -35,5 +38,13 @@ public class Language {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Greeting> getGreetings() {
+        return greetings;
+    }
+
+    public void setGreetings(List<Greeting> greetings) {
+        this.greetings = greetings;
     }
 }

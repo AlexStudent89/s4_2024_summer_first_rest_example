@@ -2,52 +2,50 @@
 package com.keyin.hello;
 
 import jakarta.persistence.*;
-import java.util.List;
+
+//import javax.persistence.*;
 
 @Entity
 public class Greeting {
 
     @Id
-    @SequenceGenerator(name = "greeting_sequence", sequenceName = "greeting_sequence", allocationSize = 1, initialValue=1)
-    @GeneratedValue(generator = "greeting_sequence")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String text;
 
-    private String greeting;
-    private String name;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "language_id", referencedColumnName = "id")
+    private Language language;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Language> languages;
+    public Greeting() {
+    }
 
-    // Getters and Setters
-    public long getId() {
+    public Greeting(String text, Language language) {
+        this.text = text;
+        this.language = language;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getGreeting() {
-        return greeting;
+    public String getText() {
+        return text;
     }
 
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getName() {
-        return name;
+    public Language getLanguage() {
+        return language;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Language> getLanguages() {
-        return languages;
-    }
-
-    public void setLanguages(List<Language> languages) {
-        this.languages = languages;
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 }
